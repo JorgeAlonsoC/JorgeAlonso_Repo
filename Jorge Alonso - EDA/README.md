@@ -56,4 +56,4 @@ Explorar y visualizar los datos para responder preguntas clave sobre el uso de e
 
 Proyecto realizado por **Jorge Alonso** para fines de práctica en análisis de datos con Python y visualización.
 
-[![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?logo=linkedin&logoColor=white&style=flat-square)](https://www.linkedin.com/in/jorge-alonso-conde) &nbsp;**Jorge Alonso Conde**
+[![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?logo=linkedin&logoColor=white&style=flat-square)](https://www.linkedin.com/in/jorge-alonso-conde) &nbsp; [**Jorge Alonso Conde**](https://www.linkedin.com/in/jorge-alonso-conde)
