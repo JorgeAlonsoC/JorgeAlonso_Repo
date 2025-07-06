@@ -37,8 +37,8 @@ Este proyecto tiene como objetivo realizar un **Análisis Exploratorio de Datos 
 1️⃣ **Tesla es la marca más eficiente**  
 > Se analizará la eficiencia media de cada modelo para confirmar si Tesla realmente se encuentra en primer lugar.
 
-2️⃣ **Las ciudades con mayor densidad de población recargan más frecuentemente los EVs**  
-> Se estudiará la frecuencia de carga en función de la densidad poblacional de cada ciudad.
+2️⃣ **Las ciudades más densamente pobladas tendrían mayor acceso a cargadores eléctricos y, por tanto, suministrarían más kW a los vehículos**  
+> Se estudiará los kW suministrados de carga en función de la densidad poblacional de cada ciudad.
 
 
 ## 📁 Conjuntos de Datos Utilizados
