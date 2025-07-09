@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Cargar datasets
-ds_evs_clean = pd.read_csv("./Recursos/Data/ds_evs_clean_final.csv")
-ds_population = pd.read_csv("./Recursos/Data/ds_population_final.csv")
+ds_evs_clean = pd.read_csv("./Data/ds_evs_clean_final.csv")
+ds_population = pd.read_csv("./Data/ds_population_final.csv")
 
 st.title("Análisis de Carga de Vehículos Eléctricos")
 
@@ -80,16 +80,22 @@ for model in pivot_percent_total.columns:
 layout = go.Layout(
     title='Porcentaje total de cargas por ciudad y modelo de vehículo',
     xaxis=dict(title='Ciudad'),
-    yaxis=dict(title='Porcentaje de cargas (%) sobre total general', range=[0, 20], showgrid=True, gridcolor='lightgray'),
+    yaxis=dict(
+        title='Porcentaje de cargas (%) sobre total general',
+        range=[0, 20],
+        showgrid=True,
+        gridcolor='lightgray'
+    ),
     barmode='stack',
     width=900,
     height=600,
-    plot_bgcolor="#ffffff",
-    paper_bgcolor='#ffffff'
+    template='plotly_white'  # ← mismo estilo del gráfico ejemplo
 )
 
 fig2 = go.Figure(data=data, layout=layout)
 st.plotly_chart(fig2)
+
+
 
 
 # Gráfico 3: Eficiencia por vehículo
@@ -133,24 +139,26 @@ trace = go.Bar(
     text=[f'{pct:.2f}%' for pct in location_percentages],
     textposition='outside',
     insidetextanchor='middle',
-    textfont=dict(color='#07032b'),
-    hovertemplate=[
+    # Usamos estilo por defecto para las etiquetas (negras)
+    hovertext=[
         f'{location}<br>{pct:.2f}% ({count} cargas)' 
         for location, pct, count in zip(location_counts.index, location_percentages, location_counts)
-    ]
+    ],
+    hoverinfo='text'  # Indicamos que use hovertext
 )
 
 layout = go.Layout(
     title='Porcentaje de cargas por localización (ciudad)',
     xaxis=dict(title='Localización de la carga'),
-    yaxis=dict(title='Porcentaje de localización (%)', 
-               showgrid=True,
-               gridcolor='lightgray'),
+    yaxis=dict(
+        title='Porcentaje de localización (%)',
+        showgrid=True,
+        gridcolor='lightgray'
+    ),
     margin=dict(b=100),
     width=800,
     height=600,
-    plot_bgcolor="#ffffff",
-    paper_bgcolor='#ffffff'
+    template='plotly_white'  # ← Estilo del gráfico ejemplo
 )
 
 fig4 = go.Figure(data=[trace], layout=layout)
@@ -168,8 +176,7 @@ trace = go.Bar(
     text=[f'{val:.2f}' for val in ds_population_sorted["(kW) / (hab/km²)"]],
     textposition='outside',
     insidetextanchor='middle',
-    textfont=dict(color='#07032b'),
-    hovertemplate=[
+    hovertext=[
         f'{city}<br>{ratio:.2f} kW por hab/km²<br>Densidad: {density} hab/km²<br>Total kW: {kws:.0f} kW'
         for city, ratio, density, kws in zip(
             ds_population_sorted["City"],
@@ -177,24 +184,27 @@ trace = go.Bar(
             ds_population_sorted["Population Density (people/km²)"],
             ds_population_sorted["Total kW supplied"]
         )
-    ]
+    ],
+    hoverinfo='text'
 )
 
 layout = go.Layout(
     title='Ratio de energía suministrada por densidad de población',
     xaxis=dict(title='Ciudad'),
-    yaxis=dict(title='kW / hab/km²',
-               showgrid=True,
-               gridcolor='lightgray'),
+    yaxis=dict(
+        title='kW / hab/km²',
+        showgrid=True,
+        gridcolor='lightgray'
+    ),
     margin=dict(b=100),
     width=800,
     height=600,
-    plot_bgcolor="#ffffff",
-    paper_bgcolor='#ffffff'
+    template='plotly_white'  # ← Estilo unificado
 )
 
 fig5 = go.Figure(data=[trace], layout=layout)
 st.plotly_chart(fig5)
+
 
 
 # Gráfico 6: Coste de electricidad por kW suministrado
