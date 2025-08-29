@@ -1,6 +1,6 @@
 # ♠️ Machine Learning aplicado al Blackjack
 
-# 🎲 Proyecto ML Blackjack
+## 🎲 Proyecto ML Blackjack
 
 Este proyecto tiene como objetivo el desarrollo de un modelo de Machine Learning capaz de analizar y predecir resultados en el contexto del juego de Blackjack. A través de un flujo de trabajo que incluye exploración de datos, entrenamiento de modelos, evaluación y despliegue en una aplicación interactiva, se busca poner en práctica técnicas de Data Science y ML Engineering.
 
