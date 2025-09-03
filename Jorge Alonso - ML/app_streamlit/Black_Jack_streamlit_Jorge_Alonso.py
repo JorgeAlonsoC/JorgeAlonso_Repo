@@ -128,7 +128,7 @@ total_wins_per = wins_total / (loss_total + push_total + wins_total)
 
 #-----------------------------
 
-st.title("Black Jack - EDA Main graphs")
+st.title("Black Jack - Gráficos de juego")
 
 st.image("bj.jpg", caption="ML aplicado a Blackjack -  Jorge Alonso", use_container_width=True)
 
@@ -269,11 +269,11 @@ st.header("Predicción Blackjack")
 # Inputs (equivalentes a tus IntText)
 col1, col2 = st.columns(2)
 with col1:
-    w_sumofcards   = st.number_input("sumofcards",  min_value=0, step=1, value=10)
-    w_ply2cardsum  = st.number_input("ply2cardsum", min_value=0, step=1, value=10)
+    w_sumofcards   = st.number_input("Suma cartas del jugador:",  min_value=0, step=1, value=10)
+    w_ply2cardsum  = st.number_input("Suma 2 primeras cartas del jugador:", min_value=0, step=1, value=10)
 with col2:
-    w_dealcard1    = st.number_input("dealcard1",   min_value=0, step=1, value=5)
-    w_ply_No_cards = st.number_input("ply_No_cards",min_value=0, step=1, value=2)
+    w_dealcard1    = st.number_input("Carta visibe del dealer:",   min_value=0, step=1, value=5)
+    w_ply_No_cards = st.number_input("Número de cartas del jugador:",min_value=0, step=1, value=2)
 
 if st.button("Predecir", type="primary"):
     # Construir DataFrame igual que en tu notebook
