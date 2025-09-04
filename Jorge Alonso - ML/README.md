@@ -32,30 +32,27 @@ A largo plazo, el sistema podría ampliarse con módulos de computer vision que 
 
 El repositorio está organizado en diferentes carpetas, cada una con un propósito específico dentro del proyecto:
 
-app_streamlit/
-Contiene los archivos necesarios para ejecutar el modelo de Machine Learning en una aplicación web con Streamlit.
-Desde aquí, los usuarios pueden interactuar con el modelo y realizar sus propias predicciones de forma sencilla.
+- **app_streamlit/**
+  - Contiene los archivos necesarios para ejecutar el modelo de Machine Learning en una aplicación web con Streamlit.  
+  - Desde aquí, los usuarios pueden interactuar con el modelo y realizar sus propias predicciones de forma sencilla.
 
-data/
-Incluye el dataset inicial en formato CSV, utilizado como base para el análisis exploratorio y el entrenamiento de los modelos.
+- **data/**
+  - Incluye el dataset inicial en formato CSV, utilizado como base para el análisis exploratorio y el entrenamiento de los modelos.
 
-docs/
-Carpeta destinada a la documentación del proyecto.
-Contiene una presentación en PDF que resume el trabajo realizado, metodología y resultados obtenidos.
+- **docs/**
+  - Carpeta destinada a la documentación del proyecto.  
+  - Contiene una presentación en PDF que resume el trabajo realizado, la metodología y los resultados obtenidos.
 
-models/
-Alberga los distintos modelos de Machine Learning desarrollados y evaluados:
+- **models/**
+  - Alberga los distintos modelos de Machine Learning desarrollados y evaluados:
+    - Un archivo con todos los modelos probados (incluyendo Random Forest y XGBoost).  
+    - Un archivo con el mejor modelo seleccionado, que se utilizó en la fase final del proyecto y en la aplicación.
 
-Un archivo con todos los modelos probados (incluyendo Random Forest y XGBoost).
+- **notebooks/**
+  - Contiene los notebooks de Jupyter con el trabajo principal del proyecto:
+    - Un notebook de EDA (Exploratory Data Analysis) sobre el dataset.  
+    - La memoria completa del proyecto, que documenta paso a paso el proceso seguido.
 
-Un archivo con el mejor modelo seleccionado, que se utilizó en la fase final del proyecto y en la aplicación.
-
-notebooks/
-Contiene los notebooks de Jupyter con el trabajo principal del proyecto:
-
-Un notebook de EDA (Exploratory Data Analysis) sobre el dataset.
-
-La memoria completa del proyecto, que documenta paso a paso el proceso seguido.
 
 ## 📌 Requisitos
 
