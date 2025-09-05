@@ -1,9 +1,5 @@
 import streamlit as st
 import pandas as pd
-import plotly.graph_objects as go
-import plotly.express as px
-import matplotlib.pyplot as plt
-import seaborn as sns
 import joblib
 import numpy as np
 
@@ -69,164 +65,12 @@ ds_blackjack["plybustbeat_numeric"] = ds_blackjack["plybustbeat"].apply(plybustb
 
 # 2 - CREACIÓN Y REPRESENTACIÓN DE LOS GRÁFICOS
 
-#suma de viscorias por cada jugador
-win_counts = {} #diccionario que va a recoger todas las victorias de cada jugador
-
-for i in range(1, 7):
-    player= f"Player{i}"
-    wins= ds_blackjack[(ds_blackjack["PlayerNo"]==player) & (ds_blackjack["winloss"]=="Win")].shape[0]
-
-    win_counts[player]= wins #añadimos al diccionario el jugador como indice y como valor las partidas ganadas
-
-wins_player1 = win_counts['Player1'] #asignamos a cada variable las victorias de dicho jugador
-wins_player2 = win_counts['Player2']
-wins_player3 = win_counts['Player3']
-wins_player4 = win_counts['Player4']
-wins_player5 = win_counts['Player5']
-wins_player6 = win_counts['Player6']
-wins_total = wins_player1 + wins_player2 + wins_player3 + wins_player4 + wins_player5 + wins_player6
-
-#suma de derrotas de jugador
-loss_counts = {} #diccionario que va a recoger todas las derrotas de cada jugador
-
-for i in range(1, 7):
-    player= f"Player{i}"
-    loss= ds_blackjack[(ds_blackjack["PlayerNo"]==player) & (ds_blackjack["winloss"]=="Loss")].shape[0]
-
-    loss_counts[player]= loss #añadimos al diccionario el jugador como indice y como valor las partidas perdidas
-
-loss_player1 = loss_counts['Player1'] #asignamos a cada variable las derrotas de dicho jugador
-loss_player2 = loss_counts['Player2']
-loss_player3 = loss_counts['Player3']
-loss_player4 = loss_counts['Player4']
-loss_player5 = loss_counts['Player5']
-loss_player6 = loss_counts['Player6']
-loss_total = loss_player1 + loss_player2 + loss_player3 + loss_player4 + loss_player5 + loss_player6
-
-#suma de empates de jugador
-push_counts = {}  # Diccionario que va a recoger todos los empates de cada jugador
-
-for i in range(1, 7):
-    player = f"Player{i}"
-    push = ds_blackjack[(ds_blackjack["PlayerNo"] == player) & (ds_blackjack["winloss"] == "Push")].shape[0]
-    
-    push_counts[player] = push  # Añadimos al diccionario el jugador como clave y las partidas empatadas como valor
-
-# Asignamos a cada variable los empates de dicho jugador
-push_player1 = push_counts['Player1']
-push_player2 = push_counts['Player2']
-push_player3 = push_counts['Player3']
-push_player4 = push_counts['Player4']
-push_player5 = push_counts['Player5']
-push_player6 = push_counts['Player6']
-push_total = push_player1 + push_player2 + push_player3 + push_player4 + push_player5 + push_player6
-
-# % total de partidas ganadas, perdidas y empatadas para los jugadores
-total_losses_per = loss_total / (loss_total + push_total + wins_total)
-total_push_per = push_total / (loss_total + push_total + wins_total)
-total_wins_per = wins_total / (loss_total + push_total + wins_total)
-
 #-----------------------------
 
-st.title("Black Jack - Gráficos de juego")
+st.title("Black Jack - Asistente virtual")
 
 st.image("bj.jpg", caption="ML aplicado a Blackjack -  Jorge Alonso", use_container_width=True)
 
-# Gráfico 1: Resultado total de las partidas para los jugadores
-
-sns.set_theme(style="white")
-
-# Datos
-labels = ['Partidas ganadas', 'Partidas perdidas', 'Partidas empatadas']
-sizes = [total_wins_per, total_losses_per, total_push_per]
-colors = sns.color_palette("deep")[0:3]  # colores suaves y agradables
-explode = (0.05, 0.05, 0.05)  # separación para cada porción
-
-# Crear gráfico de pastel para Streamlit
-fig, ax = plt.subplots(figsize=(8, 8))
-wedges, texts, autotexts = ax.pie(
-    sizes,
-    labels=labels,
-    autopct='%1.1f%%',
-    colors=colors,
-    startangle=90,
-    explode=explode,
-    shadow=True,
-    textprops={'fontsize': 14, 'color': 'white'}  # 👈 texto blanco
-)
-
-# Poner también el texto de porcentajes en blanco
-for autotext in autotexts:
-    autotext.set_color("white")
-    autotext.set_backgroundcolor("none")  # 👈 sin fondo
-
-# Poner el título en blanco
-ax.set_title('Resultado total de las partidas para los jugadores',
-             fontsize=16, weight='bold', color='white')
-
-ax.axis('equal')
-
-fig.patch.set_alpha(0.0)   # fondo de la figura transparente
-ax.set_facecolor("none")   # fondo de los ejes transparente
-
-st.pyplot(fig)
-
-
-#-----
-# Gráfico 2: Suma total de cartas (jugador) vs resultado final
-orden_resultado = ["Loss", "Win", "Push"]
-colores_resultado = {
-    "Loss": "#636EFA",  # azul
-    "Win": "#EF553B",   # rojo
-    "Push": "#00CC96"   # verde
-}
-
-# Agrupar por las 3 cartas iniciales y resultado
-grouped = ds_blackjack.groupby(["sumofcards", "winloss"]).size().reset_index(name="count")
-
-# Forzar tipo categoría con orden específico
-grouped["winloss"] = pd.Categorical(grouped["winloss"], categories=orden_resultado, ordered=True)
-
-# Crear gráfica
-fig = px.scatter(
-    grouped,
-    x="sumofcards",
-    y="winloss",
-    size="count",
-    size_max=50,
-    color="winloss",
-    color_discrete_map=colores_resultado,
-    category_orders={"winloss": orden_resultado},
-    title="Dispersión: suma de cartas totales del jugador vs resultado",
-    labels={
-        "sumofcards": "Suma total de las cartas del jugador",
-        "winloss": "Resultado",
-        "count": "Cantidad de ocurrencias"
-    },
-)
-
-st.plotly_chart(fig, use_container_width=True)
-
-#Data Frame: suma total de las cartas del jugador, % de loss, push y win registrados anteriormente.
-
-# 1. Agrupar y contar ocurrencias
-conteo_sumofcards = ds_blackjack.groupby(["sumofcards", "winloss"]).size().reset_index(name="count")
-
-# 2. Calcular el total por cada valor de sumofcards
-conteo_sumofcards["total"] = conteo_sumofcards.groupby("sumofcards")["count"].transform("sum")
-
-# 3. Calcular el porcentaje
-conteo_sumofcards["percentage"] = (conteo_sumofcards["count"] / conteo_sumofcards["total"] * 100).round(2)
-
-# 4. Pivotear la tabla para ver los porcentajes
-tabla_porcentajes_sumofcards = conteo_sumofcards.pivot(
-    index="sumofcards", columns="winloss", values="percentage"
-).fillna(0)
-
-# 5. Convertir a DataFrame con índice plano
-df_porcentajes_sumofcards = tabla_porcentajes_sumofcards.reset_index()
-
-st.dataframe(df_porcentajes_sumofcards)
 
 #---------------------------------------------------------------------MODELO DE PREDICCIÓN-------------------------------------------------------------
 
