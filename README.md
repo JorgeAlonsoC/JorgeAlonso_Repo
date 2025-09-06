@@ -23,18 +23,15 @@ Me apasiona combinar el análisis técnico con la visión de negocio para genera
 
 📌 Aquí encontrarás proyectos aplicados a distintos ámbitos de **Data Analytics** y **Data Science**:  
 
-1. **Exploratory Data Analysis (EDA)**  
+1. **Exploratory Data Analysis (EDA) - Estación de carga de vehículos eléctricos**  
    - Limpieza, transformación y análisis de datos con Python  
    - Visualización de insights relevantes con Matplotlib, Seaborn y Plotly  
 
-2. **Machine Learning Projects**  
+2. **Machine Learning aplicado al Black Jack**  
    - Modelos de regresión y clasificación  
-   - Feature engineering y evaluación de modelos  
-
-3. **Business Intelligence Dashboards**  
-   - Creación de reportes interactivos en **Power BI** y **Looker Studio**  
-   - Definición de KPIs y métricas de negocio  
-
+   - Feature engineering y evaluación de modelos
+   - Prueba del modelo y desarrollo en streamlit.
+   
 ---
 
 ## 📬 Contacto  
