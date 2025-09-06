@@ -1,104 +1,50 @@
-📊 Data Analyst & Data Science Portfolio
+# 📊 Data Analyst & Data Science Portfolio  
 
-¡Bienvenido a mi portfolio de proyectos!
-Soy Jorge Alonso Conde, Data Analyst con experiencia en análisis de datos, creación de dashboards y automatización de procesos. Actualmente estoy ampliando mi perfil hacia Data Science e Inteligencia Artificial a través de un bootcamp especializado.
+¡Bienvenido a mi portfolio de proyectos!  
+Soy **Jorge Alonso Conde**, Data Analyst con experiencia en análisis de datos, dashboards y procesos ETL. Actualmente amplío mi perfil hacia **Data Science e Inteligencia Artificial**, aplicando mis conocimientos en proyectos prácticos con Python, SQL y herramientas de BI.  
 
-Este repositorio recopila proyectos y casos prácticos en los que aplico mis conocimientos en Data Analytics, Machine Learning, SQL, Python, BI Tools y Visualización de Datos.
+Este repositorio recopila proyectos y casos prácticos en los que aplico mis conocimientos en **Data Analytics, Machine Learning, SQL, Python, BI Tools y Visualización de Datos**.  
 
-👨‍💻 Sobre mí
+---
 
-🎓 Bootcamp en Data Science & IA (The Bridge, 2025 - en curso).
+## 👨‍💻 Sobre mí  
 
-🎓 Máster en Dirección de Marketing Deportivo (ESIC Business & Marketing School, 2021-2022).
+Soy un profesional orientado a transformar datos en conocimiento útil para la toma de decisiones.  
+Me apasiona combinar el análisis técnico con la visión de negocio para generar valor en las organizaciones.  
 
-🎓 Grado en Dirección y Gestión de Empresas en el Ámbito Digital (URJC, 2017-2021).
+- 🎓 Formación en **Data Science & IA (The Bridge)** (Bootcamp en curso), **Máster Marketing (ESIC)** , **Grado Dirección y Gestión de Empresas en el Ámbito Digital (URJC)**
+- 📈 Experiencia en **consultoría, banca, marketing digital y análisis de negocio**  
+- ⚙️ Habilidades en **Python, SQL, Power BI, Looker Studio, ETL y Machine Learning**  
+- 💡 Interés en proyectos de **analítica avanzada, visualización de datos y predicción con IA**  
 
-📈 Experiencia en empresas internacionales (Accenture, WPP, Globe Group, Clikalia).
+---
 
-💡 Apasionado por transformar datos en conocimiento para la toma de decisiones.
+## 📂 Proyectos Destacados  
 
-🛠️ Skills
-🔹 Hard Skills
+📌 Aquí encontrarás proyectos aplicados a distintos ámbitos de **Data Analytics** y **Data Science**:  
 
-Lenguajes & Data Science: Python (pandas, scikit-learn), SQL, ETL.
+1. **Exploratory Data Analysis (EDA)**  
+   - Limpieza, transformación y análisis de datos con Python  
+   - Visualización de insights relevantes con Matplotlib, Seaborn y Plotly  
 
-Dashboards & BI: Power BI, Looker Studio, Power Query, Power Pivot.
+2. **Machine Learning Projects**  
+   - Modelos de regresión y clasificación  
+   - Feature engineering y evaluación de modelos  
 
-Bases de datos: SQL.
+3. **Business Intelligence Dashboards**  
+   - Creación de reportes interactivos en **Power BI** y **Looker Studio**  
+   - Definición de KPIs y métricas de negocio  
 
-Automatización & Reporting: creación de informes dinámicos y automatizados.
+---
 
-🔹 Soft Skills
+## 📬 Contacto  
 
-Trabajo en equipo y proactividad.
+- 📧 Email: **jorgealonsonconde@outlook.es**  
+- 💼 [LinkedIn – Jorge Alonso Conde](https://www.linkedin.com/in/jorge-alonso-conde)  
+- 🐙 [GitHub – JorgeAlonsoC](https://github.com/JorgeAlonsoC)  
 
-Organización, autonomía y planificación.
+---
 
-Visión estratégica y enfoque en negocio.
+✨ Gracias por visitar mi portfolio.  
+Si quieres colaborar en proyectos de **Data Analytics, BI o Data Science**, no dudes en contactarme.  
 
-Comunicación y gestión de clientes.
-
-📂 Proyectos Destacados
-
-📌 Aquí encontrarás proyectos aplicados a distintos ámbitos de Data Analytics y Data Science:
-
-Exploratory Data Analysis (EDA)
-
-Limpieza, transformación y análisis de datos con Python.
-
-Visualización de insights relevantes con Matplotlib, Seaborn y Plotly.
-
-Machine Learning Projects
-
-Modelos de regresión y clasificación.
-
-Feature engineering y evaluación de modelos.
-
-Business Intelligence Dashboards
-
-Creación de reportes interactivos en Power BI y Looker Studio.
-
-Definición de KPIs y métricas de negocio.
-
-ETL & SQL
-
-Procesos de extracción, transformación y carga de datos.
-
-Optimización de consultas y análisis en bases de datos.
-
-📊 Experiencia Profesional
-🔹 Data Analyst – Globe Group (Ene 2025 – Jun 2025)
-
-Creación y automatización de informes (Excel, Power BI, Power Query, Power Pivot).
-
-Análisis de datos e insights para la toma de decisiones.
-
-Procesos ETL y validación de datos en puntos de venta.
-
-🔹 Rental Analyst – Clikalia (Jul 2024 – Oct 2024)
-
-Mantenimiento y análisis de bases de datos.
-
-Creación de dashboards e informes en Power BI y Looker Studio.
-
-Comunicación interdepartamental.
-
-🔹 Consultor Júnior – Accenture (Mar 2023 – Jul 2024)
-
-Analítica de datos en BBVA (KPIs, dashboards, informes).
-
-Automatización de procesos con SQL, Excel y BI Tools.
-
-Reporting y coordinación con equipos multidisciplinares.
-
-🔹 Becario Analista Digital – Wunderman Thompson (WPP) (Jun 2022 – Nov 2022)
-
-Reportes y análisis de campañas digitales y redes sociales.
-
-Dashboards en Looker Studio y análisis de métricas.
-
-Segmentación y etiquetado de campañas.
-
-📬 Contacto
-
-📧 Email: jorgealonsonconde@outlook.es
