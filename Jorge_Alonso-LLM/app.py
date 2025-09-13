@@ -11,6 +11,7 @@ app.config["DEBUG"] = True
 
 
 #SE DEBERÍA HACER CON LAS VARIABES EN INGLES HTML?
+#const response = await fetch('http://localhost:5000/entrenamientos', {
 
 
 #inicio de la API
@@ -20,7 +21,7 @@ def main ():
 
 #Enpoint que recoge la pregunta (Json)
 @app.route("/entrenamientos", methods = ["POST"])
-def marketing():
+def entrenamientos():
     """
     {"pregunta": "Quiero que me des una rutina de entrenamiento para una persona que va a comenzar a sair a correr en calle, cuyo objetivo es correr una carrera de 10km dentro de 3 meses. Además tiene disponibilidad de entrenar 3 días por semana (aproximadamente 1 hora cada día)"}
     """
