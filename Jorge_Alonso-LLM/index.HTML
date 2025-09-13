@@ -1,23 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Assistant - Chat con LLM</title>
-    <meta name="description" content="Interfaz de chat interactiva para conversaciones con LLM">
-    
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AI Assistant - Entrenador Personal con IA</title>
+    <meta name="description" content="Crea rutinas de entrenamiento personalizadas y consulta con nuestro asistente de IA especializado en fitness y deportes"/>
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            /* Base colors - Dark theme */
             --background: 222 84% 4%;
             --foreground: 210 40% 98%;
-            --card: 222 84% 4%;
+            --card: 222 84% 6%;
             --card-foreground: 210 40% 98%;
             --popover: 222 84% 4%;
             --popover-foreground: 210 40% 98%;
@@ -34,13 +29,21 @@
             --border: 217 32% 17%;
             --input: 217 32% 17%;
             --ring: 224 71% 4%;
+            --success: 142 76% 36%;
+            --success-foreground: 355 7% 97%;
 
-            /* AI specific colors */
             --ai-primary: 263 70% 50%;
             --ai-secondary: 217 91% 60%;
             --ai-accent: 280 80% 70%;
-            
-            /* Radius */
+            --ai-glow: 263 70% 50%;
+
+            --gradient-ai: linear-gradient(135deg, hsl(var(--ai-primary)), hsl(var(--ai-secondary)));
+            --gradient-card: linear-gradient(135deg, hsl(var(--card)), hsl(var(--card) / 0.8));
+
+            --shadow-glow: 0 0 20px hsl(var(--ai-glow) / 0.3);
+            --shadow-card: 0 4px 12px hsl(var(--background) / 0.8);
+
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --radius: 0.75rem;
         }
 
@@ -50,394 +53,148 @@
             color: hsl(var(--foreground));
             line-height: 1.5;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
 
         /* Header */
-        .header {
-            border-bottom: 1px solid hsl(var(--border));
-            background: hsl(var(--card) / 0.5);
-            backdrop-filter: blur(8px);
-        }
-
-        .header-content {
-            padding: 1.5rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .bot-icon {
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            background: linear-gradient(135deg, hsl(var(--ai-primary)), hsl(var(--ai-secondary)));
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        .bot-icon svg {
-            width: 1.5rem;
-            height: 1.5rem;
-            color: hsl(var(--primary-foreground));
-        }
-
-        .header-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, hsl(var(--ai-primary)), hsl(var(--ai-secondary)));
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-        }
-
-        .header-subtitle {
-            color: hsl(var(--muted-foreground));
-        }
+        .header { border-bottom: 1px solid hsl(var(--border)); background: hsl(var(--card) / 0.5); backdrop-filter: blur(8px); }
+        .header-content { padding: 1.5rem 0; display: flex; align-items: center; gap: 0.75rem; }
+        .bot-icon { padding: 0.75rem; border-radius: 0.5rem; background: var(--gradient-ai); animation: glow 2s ease-in-out infinite alternate; display: flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; }
+        .bot-icon svg { width: 1.5rem; height: 1.5rem; color: #fff; }
+        .header-title { font-size: 1.5rem; font-weight: 700; background: var(--gradient-ai); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .header-subtitle { color: hsl(var(--muted-foreground)); }
 
         /* Main content */
-        .main-content {
-            flex: 1;
-            padding: 1.5rem 0;
-            max-width: 64rem;
-            margin: 0 auto;
-            width: 100%;
-            overflow-y: auto;
-        }
+        .main-content { padding: 2rem 0; }
+        .main-title { text-align: center; margin-bottom: 2rem; }
+        .main-title h2 { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; background: var(--gradient-ai); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .main-title p { font-size: 1.125rem; color: hsl(var(--muted-foreground)); max-width: 42rem; margin: 0 auto; }
 
-        .messages-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            min-height: 400px;
-        }
+        /* Tabs */
+        .tabs { margin-bottom: 2rem; }
+        .tabs-list { display: grid; grid-template-columns: 1fr 1fr; background: hsl(var(--card) / 0.5); border: 1px solid hsl(var(--border)); border-radius: var(--radius); padding: 0.25rem; }
+        .tab-trigger { padding: 0.75rem 1rem; border: 0; background: transparent; color: hsl(var(--muted-foreground)); cursor: pointer; border-radius: calc(var(--radius) - 2px); transition: var(--transition-smooth); display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 500; }
+        .tab-trigger.active { background: var(--gradient-ai); color: #fff; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        .welcome-screen {
-            text-align: center;
-            padding: 3rem 0;
-        }
+        /* Cards */
+        .card { background: var(--gradient-card); border: 1px solid hsl(var(--border)); border-radius: var(--radius); backdrop-filter: blur(8px); max-width: 48rem; margin: 0 auto; box-shadow: var(--shadow-card); }
+        .card-header { padding: 1.5rem; text-align: center; border-bottom: 1px solid hsl(var(--border)); }
+        .card-icon { width: fit-content; margin: 0 auto 1rem; padding: 0.75rem; border-radius: 50%; background: var(--gradient-ai); animation: glow 2s ease-in-out infinite alternate; }
+        .card-icon svg { width: 1.5rem; height: 1.5rem; color: #fff; }
+        .card-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .card-description { color: hsl(var(--muted-foreground)); }
+        .card-content { padding: 1.5rem; }
 
-        .welcome-icon {
-            display: inline-flex;
-            padding: 1rem;
-            border-radius: 50%;
-            background: radial-gradient(circle, hsl(var(--ai-primary) / 0.2), transparent);
-            margin-bottom: 1rem;
-        }
+        /* Form */
+        .form { display: flex; flex-direction: column; gap: 1.5rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .label { font-weight: 600; color: hsl(var(--foreground)); }
+        .input { padding: 0.75rem; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background: hsl(var(--background) / 0.5); color: hsl(var(--foreground)); font-size: 1rem; transition: var(--transition-smooth); }
+        .input:focus { outline: none; border-color: hsl(var(--ai-primary)); box-shadow: 0 0 0 2px hsl(var(--ai-primary) / 0.2); }
+        .textarea { min-height: 5rem; resize: vertical; }
+        .select { appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; }
 
-        .welcome-icon svg {
-            width: 3rem;
-            height: 3rem;
-            color: hsl(var(--ai-primary));
-        }
+        /* Counter */
+        .counter { display: flex; align-items: center; justify-content: center; gap: 1rem; }
+        .counter-btn { width: 3rem; height: 3rem; border: 1px solid hsl(var(--border)); background: hsl(var(--muted)); color: hsl(var(--muted-foreground)); border-radius: var(--radius); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition-smooth); font-family: monospace; font-size: 1.125rem; }
+        .counter-btn:hover:not(:disabled) { background: hsl(var(--muted) / 0.8); }
+        .counter-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .counter-value { font-size: 1.5rem; font-weight: 700; color: hsl(var(--ai-primary)); min-width: 3rem; text-align: center; }
 
-        .welcome-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
+        /* Buttons */
+        .btn { padding: 0.75rem 1.5rem; border: 0; border-radius: var(--radius); font-weight: 500; cursor: pointer; transition: var(--transition-smooth); display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 1rem; }
+        .btn-primary { background: var(--gradient-ai); color: #fff; }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px hsl(var(--ai-primary) / 0.4); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-outline { background: transparent; border: 1px solid hsl(var(--border)); color: hsl(var(--foreground)); }
+        .btn-outline:hover:not(:disabled) { background: hsl(var(--muted)); }
+        .btn-lg { padding: 1rem 2rem; font-size: 1.125rem; height: 3rem; }
+        .btn-icon { width: 2.5rem; height: 2.5rem; padding: 0; }
 
-        .welcome-text {
-            color: hsl(var(--muted-foreground));
-        }
+        /* Chat */
+        .chat-container { height: 24rem; overflow-y: auto; padding: 1rem; background: hsl(var(--background) / 0.3); border: 1px solid hsl(var(--border)); border-radius: var(--radius); margin-bottom: 1rem; }
+        .chat-fullscreen { position: fixed; inset: 0; z-index: 1000; background: hsl(var(--background) / 0.95); backdrop-filter: blur(8px); }
+        .chat-fullscreen .chat-container { height: calc(100vh - 200px); max-width: 64rem; margin: 0 auto; }
+        .chat-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem; border-bottom: 1px solid hsl(var(--border)); background: hsl(var(--card)); }
+        .chat-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; }
+        .chat-empty-icon { padding: 1rem; border-radius: 50%; background: var(--gradient-ai); margin-bottom: 1rem; animation: glow 2s ease-in-out infinite alternate; }
+        .chat-empty-icon svg { width: 2rem; height: 2rem; color: #fff; }
+        .message { display: flex; gap: 0.75rem; margin-bottom: 1rem; animation: fadeIn 0.5s ease-out; }
+        .message.user { justify-content: flex-end; }
+        .message-avatar { padding: 0.5rem; border-radius: var(--radius); flex-shrink: 0; width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; }
+        .message-avatar.bot { background: var(--gradient-ai); }
+        .message-avatar.user { background: hsl(var(--muted)); }
+        .message-avatar svg { width: 1rem; height: 1rem; color: #fff; }
+        .message-avatar.user svg { color: hsl(var(--muted-foreground)); }
+        .message-card { max-width: 80%; padding: 1rem; border-radius: var(--radius); border: 1px solid hsl(var(--border)); }
+        .message-card.user { background: var(--gradient-ai); color: #fff; border-color: hsl(var(--ai-primary)); }
+        .message-card.bot { background: hsl(var(--card)); }
+        .message-time { font-size: 0.75rem; opacity: 0.7; margin-top: 0.5rem; }
+        .message-card.user .message-time { color: rgba(255, 255, 255, 0.7); }
+        .chat-input { display: flex; gap: 0.75rem; padding: 1rem; border-top: 1px solid hsl(var(--border)); background: hsl(var(--card)); }
+        .chat-input .input { flex: 1; }
 
-        /* Messages */
-        .message {
-            display: flex;
-            gap: 1rem;
-            animation: fadeIn 0.5s ease-out;
-        }
+        /* Routine Display */
+        .routine-display { position: fixed; inset: 0; z-index: 1000; background: hsl(var(--background) / 0.95); backdrop-filter: blur(8px); display: flex; flex-direction: column; }
+        .routine-header { border-bottom: 1px solid hsl(var(--border)); background: hsl(var(--card) / 0.5); backdrop-filter: blur(8px); padding: 1rem 0; }
+        .routine-content { flex: 1; overflow-y: auto; padding: 2rem 0; }
+        .routine-footer { border-top: 1px solid hsl(var(--border)); background: hsl(var(--card) / 0.5); backdrop-filter: blur(8px); padding: 1rem 0; text-align: center; }
 
-        .message.user {
-            justify-content: flex-end;
-        }
+        /* Markdown content */
+        .markdown-content { color: hsl(var(--foreground)); line-height: 1.7; }
+        .markdown-content h1 { font-size: 2rem; font-weight: 800; color: hsl(var(--ai-primary)); margin: 1.75rem 0 1rem; }
+        .markdown-content h2 { font-size: 1.6rem; font-weight: 800; color: hsl(var(--ai-primary)); margin: 1.5rem 0 0.85rem; }
+        .markdown-content h3 { font-size: 1.25rem; font-weight: 700; color: hsl(var(--ai-primary)); margin: 1.25rem 0 0.75rem; }
+        .markdown-content h4 { font-size: 1.1rem; font-weight: 700; color: hsl(var(--ai-primary)); margin: 1rem 0 0.6rem; }
+        .markdown-content h5 { font-size: 1rem; font-weight: 700; color: hsl(var(--ai-primary)); margin: 0.85rem 0 0.5rem; }
+        .markdown-content h6 { font-size: 0.95rem; font-weight: 700; color: hsl(var(--ai-primary)); margin: 0.75rem 0 0.4rem; }
+        .markdown-content p { margin: 0 0 1rem; }
+        .markdown-content a { color: hsl(var(--ai-secondary)); text-decoration: underline; }
+        .markdown-content ul, .markdown-content ol { margin: 0.75rem 0 1rem 1.25rem; }
+        .markdown-content li { margin: 0.25rem 0; }
+        .markdown-content strong { font-weight: 700; color: hsl(var(--foreground)); }
+        .markdown-content em { font-style: italic; }
+        .markdown-content hr { border: 0; border-top: 1px solid hsl(var(--border)); margin: 1.25rem 0; }
+        .markdown-content blockquote { border-left: 4px solid hsl(var(--ai-primary)); padding-left: 1rem; font-style: italic; color: hsl(var(--muted-foreground)); margin: 1rem 0; }
+        .markdown-content code { background: hsl(var(--muted)); padding: 0.15rem 0.35rem; border-radius: 0.25rem; font-size: 0.875rem; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+        .markdown-content pre { background: hsl(var(--muted)); padding: 1rem; border-radius: var(--radius); overflow-x: auto; margin: 1rem 0; }
+        .markdown-content pre code { background: transparent; padding: 0; }
+        .markdown-content table { width: 100%; border-collapse: collapse; margin: 1rem 0; border: 1px solid hsl(var(--border)); border-radius: var(--radius); overflow: hidden; }
+        .markdown-content th { background: hsl(var(--muted)); padding: 0.75rem; text-align: left; font-weight: 600; border-bottom: 1px solid hsl(var(--border)); }
+        .markdown-content td { padding: 0.75rem; border-bottom: 1px solid hsl(var(--border)); }
+        .markdown-content tr:last-child td { border-bottom: none; }
+        .markdown-content tr:nth-child(even) { background: hsl(var(--muted) / 0.3); }
 
-        .message-avatar {
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            flex-shrink: 0;
-            width: fit-content;
-            height: fit-content;
-        }
-
-        .message-avatar.bot {
-            background: linear-gradient(135deg, hsl(var(--ai-primary)), hsl(var(--ai-secondary)));
-        }
-
-        .message-avatar.user {
-            background: hsl(var(--muted));
-        }
-
-        .message-avatar svg {
-            width: 1.25rem;
-            height: 1.25rem;
-        }
-
-        .message-avatar.bot svg {
-            color: hsl(var(--primary-foreground));
-        }
-
-        .message-avatar.user svg {
-            color: hsl(var(--muted-foreground));
-        }
-
-        .message-card {
-            max-width: 80%;
-            padding: 1rem;
-            border-radius: var(--radius);
-            border: 1px solid hsl(var(--border));
-        }
-
-        .message-card.user {
-            background: hsl(var(--ai-primary));
-            color: hsl(var(--primary-foreground));
-            border-color: hsl(var(--ai-primary));
-        }
-
-        .message-card.bot {
-            background: hsl(var(--card));
-        }
-
-        .message-content {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .message-time {
-            font-size: 0.75rem;
-            opacity: 0.7;
-            margin-top: 0.5rem;
-            display: block;
-        }
-
-        .loading-message {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .spinner {
-            width: 1rem;
-            height: 1rem;
-            animation: spin 1s linear infinite;
-        }
-
-        .loading-text {
-            color: hsl(var(--muted-foreground));
-        }
-
-        /* Input area */
-        .input-area {
-            border-top: 1px solid hsl(var(--border));
-            background: hsl(var(--card) / 0.5);
-            backdrop-filter: blur(8px);
-        }
-
-        .input-container {
-            padding: 1rem 0;
-            max-width: 64rem;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .input-form {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .input-field {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border: 1px solid hsl(var(--border));
-            border-radius: var(--radius);
-            background: hsl(var(--background));
-            color: hsl(var(--foreground));
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .input-field:focus {
-            border-color: hsl(var(--ai-primary));
-            box-shadow: 0 0 0 2px hsl(var(--ai-primary) / 0.2);
-        }
-
-        .input-field:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .send-button {
-            padding: 0.75rem;
-            border: none;
-            border-radius: var(--radius);
-            background: linear-gradient(135deg, hsl(var(--ai-primary)), hsl(var(--ai-secondary)));
-            color: hsl(var(--primary-foreground));
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 3rem;
-            height: 3rem;
-        }
-
-        .send-button:hover:not(:disabled) {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px hsl(var(--ai-primary) / 0.4);
-        }
-
-        .send-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .send-button svg {
-            width: 1rem;
-            height: 1rem;
-        }
+        /* Toast */
+        .toast { position: fixed; top: 1rem; right: 1rem; background: hsl(var(--destructive)); color: hsl(var(--destructive-foreground)); padding: 1rem; border-radius: var(--radius); box-shadow: 0 4px 12px rgba(0, 0, 0, .3); animation: slideIn .3s ease-out; z-index: 1100; cursor: pointer; max-width: 20rem; }
+        .toast.success { background: hsl(var(--success)); color: hsl(var(--success-foreground)); }
 
         /* Animations */
-        @keyframes glow {
-            0% { box-shadow: 0 0 5px hsl(var(--ai-primary) / 0.5); }
-            100% { box-shadow: 0 0 20px hsl(var(--ai-primary) / 0.8); }
-        }
+        @keyframes glow { 0% { box-shadow: 0 0 5px hsl(var(--ai-glow) / 0.5);} 100% { box-shadow: 0 0 20px hsl(var(--ai-glow) / 0.8);} }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; transform: translateY(0);} }
+        @keyframes slideIn { from { transform: translateX(100%);} to { transform: translateX(0);} }
+        @keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
+        .spinner { animation: spin 1s linear infinite; }
 
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Markdown styling */
-        .message-content h1, .message-content h2, .message-content h3, 
-        .message-content h4, .message-content h5, .message-content h6 {
-            font-weight: bold;
-            margin: 1rem 0 0.5rem 0;
-            line-height: 1.25;
-        }
-
-        .message-content h1 { font-size: 1.5rem; }
-        .message-content h2 { font-size: 1.25rem; }
-        .message-content h3 { font-size: 1.125rem; }
-
-        .message-content strong {
-            font-weight: 600;
-            color: hsl(var(--ai-primary));
-        }
-
-        .message-content p {
-            margin: 0.5rem 0;
-        }
-
-        .message-content ul, .message-content ol {
-            margin: 0.5rem 0;
-            padding-left: 1.5rem;
-        }
-
-        .message-content li {
-            margin: 0.25rem 0;
-        }
-
-        /* Table styling */
-        .message-content table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-            background: hsl(var(--card));
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: 0 2px 4px hsl(var(--border) / 0.3);
-        }
-
-        .message-content th {
-            background: linear-gradient(135deg, hsl(var(--ai-primary)), hsl(var(--ai-secondary)));
-            color: hsl(var(--primary-foreground));
-            font-weight: 600;
-            padding: 0.75rem;
-            text-align: left;
-            border: none;
-        }
-
-        .message-content td {
-            padding: 0.75rem;
-            border-bottom: 1px solid hsl(var(--border));
-            background: hsl(var(--card));
-        }
-
-        .message-content tr:last-child td {
-            border-bottom: none;
-        }
-
-        .message-content tr:hover td {
-            background: hsl(var(--muted) / 0.5);
-        }
-
-        /* Code blocks */
-        .message-content code {
-            background: hsl(var(--muted));
-            padding: 0.125rem 0.25rem;
-            border-radius: 0.25rem;
-            font-family: monospace;
-            font-size: 0.875rem;
-        }
-
-        .message-content pre {
-            background: hsl(var(--muted));
-            padding: 1rem;
-            border-radius: var(--radius);
-            overflow-x: auto;
-            margin: 1rem 0;
-        }
-
-        .message-content pre code {
-            background: none;
-            padding: 0;
-        }
-
-        /* Toast notification */
-        .toast {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background: hsl(var(--destructive));
-            color: hsl(var(--destructive-foreground));
-            padding: 1rem;
-            border-radius: var(--radius);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            animation: slideIn 0.3s ease-out;
-            z-index: 1000;
-            cursor: pointer;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
-        }
+        /* Utils */
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 0.5rem; }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .container {
-                padding: 0 0.5rem;
-            }
-            
-            .message-card {
-                max-width: 90%;
-            }
-            
-            .header-title {
-                font-size: 1.25rem;
-            }
+            .container { padding: 0 0.5rem; }
+            .message-card { max-width: 90%; }
+            .header-title { font-size: 1.25rem; }
+            .tabs-list { grid-template-columns: 1fr; }
+            .counter { justify-content: center; }
+            .main-title h2 { font-size: 1.5rem; }
+            .routine-content { padding: 1rem 0; }
         }
     </style>
 </head>
@@ -458,151 +215,522 @@
                 </div>
                 <div>
                     <h1 class="header-title">AI Assistant</h1>
-                    <p class="header-subtitle">Pregúntame lo que quieras</p>
+                    <p class="header-subtitle">Entrenador Personal con IA</p>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="main-content">
+    <!-- Main -->
+    <main class="main-content">
         <div class="container">
-            <div class="messages-container" id="messagesContainer">
-                <div class="welcome-screen" id="welcomeScreen">
-                    <div class="welcome-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 8V4H8"/>
-                            <rect width="16" height="12" x="4" y="8" rx="2"/>
-                            <path d="M2 14h2"/>
-                            <path d="M20 14h2"/>
-                            <path d="M15 13v2"/>
-                            <path d="M9 13v2"/>
+            <div class="main-title">
+                <h2>Tu Entrenador Personal con IA</h2>
+                <p>
+                    Crea rutinas personalizadas o haz consultas libres sobre entrenamientos 
+                    con nuestro asistente inteligente
+                </p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tabs-list">
+                    <button class="tab-trigger active" data-tab="routine">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m6.5 6.5 11 11"/>
+                            <path d="m21 21-1-1"/>
+                            <path d="m3 21 1-1"/>
+                            <path d="m18 22 4-4"/>
+                            <path d="m2 22 4-4"/>
+                            <path d="m3 2 1 1"/>
+                            <path d="m21 2-1 1"/>
+                            <path d="m6 2 4 4"/>
+                            <path d="m18 2-4 4"/>
                         </svg>
+                        Crear Rutina
+                    </button>
+                    <button class="tab-trigger" data-tab="chat">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        Consultas Libres
+                    </button>
+                </div>
+            </div>
+
+            <!-- Routine Form -->
+            <div class="tab-content active" id="routine-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m6.5 6.5 11 11"/>
+                                <path d="m21 21-1-1"/>
+                                <path d="m3 21 1-1"/>
+                                <path d="m18 22 4-4"/>
+                                <path d="m2 22 4-4"/>
+                                <path d="m3 2 1 1"/>
+                                <path d="m21 2-1 1"/>
+                                <path d="m6 2 4 4"/>
+                                <path d="m18 2-4 4"/>
+                            </svg>
+                        </div>
+                        <h3 class="card-title">Crear Rutina Personalizada</h3>
+                        <p class="card-description">Completa el formulario para generar tu rutina de entrenamiento ideal</p>
                     </div>
-                    <h2 class="welcome-title">Bienvenido al Asistente de IA para entrenamientos personalizados!</h2>
-                    <p class="welcome-text">Te ayudamos a planificar tus entrenamientos.</p>
+                    <div class="card-content">
+                        <form class="form" id="routineForm">
+                            <div class="form-group">
+                                <label class="label" for="objetivo">Objetivo del deportista *</label>
+                                <textarea class="input textarea" id="objetivo" placeholder="Ej: Perder peso, ganar músculo, mejorar resistencia..." required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="label" for="modalidad">Modalidad deportiva *</label>
+                                <input type="text" class="input" id="modalidad" placeholder="Ej: Running, Gimnasio, CrossFit..." required/>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="label">Frecuencia de entrenamientos por semana *</label>
+                                <div class="counter">
+                                    <button type="button" class="counter-btn" id="frecuenciaDown">-</button>
+                                    <span class="counter-value" id="frecuenciaValue">3</span>
+                                    <button type="button" class="counter-btn" id="frecuenciaUp">+</button>
+                                    <span style="color: hsl(var(--muted-foreground));">días por semana</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="label" for="duracion">Duración de los entrenamientos *</label>
+                                <select class="input select" id="duracion" required>
+                                    <option value="">Selecciona la duración</option>
+                                    <option value="30 minutos">30 minutos</option>
+                                    <option value="45 minutos">45 minutos</option>
+                                    <option value="60 minutos">60 minutos</option>
+                                    <option value="75 minutos">75 minutos</option>
+                                    <option value="90 minutos">90 minutos</option>
+                                    <option value="105 minutos">105 minutos</option>
+                                    <option value="120 minutos">120 minutos</option>
+                                    <option value="Más de 2 horas">Más de 2 horas</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="label" for="nivel">Nivel del deportista *</label>
+                                <select class="input select" id="nivel" required>
+                                    <option value="">Selecciona tu nivel</option>
+                                    <option value="principiante">Principiante</option>
+                                    <option value="intermedio">Intermedio</option>
+                                    <option value="avanzado">Avanzado</option>
+                                    <option value="experto">Experto</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="label" for="material">Material deportivo disponible</label>
+                                <textarea class="input textarea" id="material" placeholder="Ej: Mancuernas, bandas elásticas, barra, solo peso corporal..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg" id="routineSubmit">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m22 2-7 20-4-9-9-4Z"/>
+                                    <path d="M22 2 11 13"/>
+                                </svg>
+                                Crear Rutina Personalizada
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat -->
+            <div class="tab-content" id="chat-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="card-title">Consultas Libres</h3>
+                        <p class="card-description">Haz cualquier pregunta sobre entrenamientos</p>
+                    </div>
+                    <div class="card-content">
+                        <div id="chatWrapper">
+                            <div class="chat-header">
+                                <h3 style="font-weight: 600;">Chat con IA</h3>
+                                <button class="btn btn-outline btn-icon" id="fullscreenToggle" title="Pantalla completa">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
+                                        <path d="M21 8V5a2 2 0 0 0-2-2h-3"/>
+                                        <path d="M3 16v3a2 2 0 0 0 2 2h3"/>
+                                        <path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div class="chat-container" id="chatContainer">
+                                <div class="chat-empty" id="chatEmpty">
+                                    <div class="chat-empty-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M12 8V4H8"/>
+                                            <rect width="16" height="12" x="4" y="8" rx="2"/>
+                                            <path d="M2 14h2"/>
+                                            <path d="M20 14h2"/>
+                                            <path d="M15 13v2"/>
+                                            <path d="M9 13v2"/>
+                                        </svg>
+                                    </div>
+                                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">¡Bienvenido al chat de consultas!</h3>
+                                    <p style="color: hsl(var(--muted-foreground));">Pregúntame cualquier cosa sobre entrenamientos</p>
+                                </div>
+                            </div>
+
+                            <div class="chat-input">
+                                <input type="text" class="input" id="chatInput" placeholder="Escribe tu consulta aquí..."/>
+                                <button class="btn btn-primary btn-icon" id="chatSend" title="Enviar">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="m22 2-7 20-4-9-9-4Z"/>
+                                        <path d="M22 2 11 13"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Routine Display Modal -->
+    <div id="routineDisplay" class="routine-display hidden">
+        <div class="routine-header">
+            <div class="container">
+                <div class="flex items-center justify-between">
+                    <h2 style="font-size:1.5rem;font-weight:700;background:var(--gradient-ai);-webkit-background-clip:text;background-clip:text;color:transparent;">
+                        Tu Rutina Personalizada
+                    </h2>
+                    <div class="flex items-center gap-2">
+                        <button class="btn btn-outline btn-icon" id="downloadRoutine" title="Descargar rutina">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7,10 12,15 17,10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                        </button>
+                        <button class="btn btn-outline btn-icon" id="shareRoutine" title="Compartir rutina">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                                <polyline points="16,6 12,2 8,6"/>
+                                <line x1="12" y1="2" x2="12" y2="15"/>
+                            </svg>
+                        </button>
+                        <button class="btn btn-outline btn-icon" id="closeRoutine" title="Cerrar">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Input Area -->
-    <div class="input-area">
-        <div class="container">
-            <div class="input-container">
-                <form class="input-form" id="chatForm">
-                    <input 
-                        type="text" 
-                        class="input-field" 
-                        id="questionInput"
-                        placeholder="Escribe tu pregunta aquí..."
-                        autocomplete="off"
-                    >
-                    <button type="submit" class="send-button" id="sendButton">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="m22 2-7 20-4-9-9-4Z"/>
-                            <path d="M22 2 11 13"/>
-                        </svg>
-                    </button>
-                </form>
+        <div class="routine-content">
+            <div class="container">
+                <div style="max-width: 64rem; margin: 0 auto;">
+                    <div class="card" style="max-width: none;">
+                        <div class="card-content">
+                            <div id="routineContent" class="markdown-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="routine-footer">
+            <div class="container">
+                <button class="btn btn-outline" id="closeRoutineFooter">Cerrar y volver al inicio</button>
             </div>
         </div>
     </div>
 
     <script>
-        class LLMChat {
+        class AIAssistant {
             constructor() {
-                this.messages = [];
+                this.chatMessages = [];
                 this.isLoading = false;
+                this.frecuencia = 3;
+                this.isFullscreen = false;
+                this.currentRoutine = '';
                 this.initializeElements();
                 this.bindEvents();
             }
 
             initializeElements() {
-                this.messagesContainer = document.getElementById('messagesContainer');
-                this.welcomeScreen = document.getElementById('welcomeScreen');
-                this.chatForm = document.getElementById('chatForm');
-                this.questionInput = document.getElementById('questionInput');
-                this.sendButton = document.getElementById('sendButton');
+                this.tabTriggers = document.querySelectorAll('.tab-trigger');
+                this.tabContents = document.querySelectorAll('.tab-content');
+
+                this.routineForm = document.getElementById('routineForm');
+                this.frecuenciaDown = document.getElementById('frecuenciaDown');
+                this.frecuenciaUp = document.getElementById('frecuenciaUp');
+                this.frecuenciaValue = document.getElementById('frecuenciaValue');
+                this.routineSubmit = document.getElementById('routineSubmit');
+
+                this.chatWrapper = document.getElementById('chatWrapper');
+                this.chatContainer = document.getElementById('chatContainer');
+                this.chatEmpty = document.getElementById('chatEmpty');
+                this.chatInput = document.getElementById('chatInput');
+                this.chatSend = document.getElementById('chatSend');
+                this.fullscreenToggle = document.getElementById('fullscreenToggle');
+
+                this.routineDisplay = document.getElementById('routineDisplay');
+                this.routineContent = document.getElementById('routineContent');
+                this.closeRoutine = document.getElementById('closeRoutine');
+                this.closeRoutineFooter = document.getElementById('closeRoutineFooter');
+                this.downloadRoutine = document.getElementById('downloadRoutine');
+                this.shareRoutine = document.getElementById('shareRoutine');
             }
 
             bindEvents() {
-                this.chatForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.sendQuestion();
+                this.tabTriggers.forEach(trigger => {
+                    trigger.addEventListener('click', (e) => {
+                        const btn = e.target.closest('button[data-tab]');
+                        if (!btn) return;
+                        this.switchTab(btn.dataset.tab);
+                    });
                 });
 
-                this.questionInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
+                this.frecuenciaDown.addEventListener('click', () => this.changeFrecuencia(-1));
+                this.frecuenciaUp.addEventListener('click', () => this.changeFrecuencia(1));
+
+                this.routineForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.submitRoutine();
+                });
+
+                this.chatSend.addEventListener('click', () => this.sendChatMessage());
+                this.chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
                         e.preventDefault();
-                        this.sendQuestion();
+                        this.sendChatMessage();
                     }
+                });
+
+                this.fullscreenToggle.addEventListener('click', () => this.toggleFullscreen());
+
+                this.closeRoutine.addEventListener('click', () => this.hideRoutineDisplay());
+                this.closeRoutineFooter.addEventListener('click', () => this.hideRoutineDisplay());
+                this.downloadRoutine.addEventListener('click', () => this.downloadRoutineFile());
+                this.shareRoutine.addEventListener('click', () => this.shareRoutineContent());
+            }
+
+            switchTab(tabName) {
+                this.tabTriggers.forEach(trigger => {
+                    trigger.classList.toggle('active', trigger.dataset.tab === tabName);
+                });
+                this.tabContents.forEach(content => {
+                    content.classList.toggle('active', content.id === `${tabName}-tab`);
                 });
             }
 
-            async sendQuestion() {
-                const question = this.questionInput.value.trim();
-                if (!question || this.isLoading) return;
+            changeFrecuencia(delta) {
+                this.frecuencia = Math.max(1, Math.min(7, this.frecuencia + delta));
+                this.frecuenciaValue.textContent = this.frecuencia;
+                this.frecuenciaDown.disabled = this.frecuencia <= 1;
+                this.frecuenciaUp.disabled = this.frecuencia >= 7;
+            }
 
-                // Add user message
-                this.addMessage('user', question);
-                this.questionInput.value = '';
-                this.setLoading(true);
+            async submitRoutine() {
+                const formData = {
+                    objetivo: document.getElementById('objetivo').value.trim(),
+                    modalidad: document.getElementById('modalidad').value.trim(),
+                    frecuencia: this.frecuencia,
+                    duracion: document.getElementById('duracion').value,
+                    nivel: document.getElementById('nivel').value,
+                    material: document.getElementById('material').value.trim()
+                };
+
+                if (!formData.objetivo || !formData.modalidad || !formData.duracion || !formData.nivel) {
+                    this.showToast('Por favor completa todos los campos obligatorios', 'error');
+                    return;
+                }
+
+                const prompt = `Crea una rutina de entrenamiento personalizada con las siguientes características:
+
+**Objetivo:** ${formData.objetivo}
+**Modalidad deportiva:** ${formData.modalidad}
+**Frecuencia:** ${formData.frecuencia} días por semana
+**Duración por sesión:** ${formData.duracion}
+**Nivel del deportista:** ${formData.nivel}
+**Material disponible:** ${formData.material || "No especificado"}
+
+Por favor, proporciona una rutina detallada con ejercicios específicos, series, repeticiones y descansos organizados por días. Incluye también consejos importantes y una tabla resumen.`;
+
+                this.setRoutineLoading(true);
 
                 try {
                     const response = await fetch('http://127.0.0.1:5000/entrenamientos', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ pregunta: question }),
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ pregunta: prompt }),
                     });
 
-                    if (!response.ok) {
-                        throw new Error(`Error del servidor: ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`Error del servidor: ${response.status}`);
 
                     const data = await response.json();
+                    if (data.error) throw new Error(data.error);
 
-                    // Check for error in response
-                    if (data.error) {
-                        throw new Error(data.error);
-                    }
+                    this.currentRoutine = data.respuesta || "No se recibió respuesta";
+                    this.showRoutineDisplay(this.currentRoutine);
 
-                    // Add assistant response
-                    const responseText = data.respuesta || "No se recibió respuesta";
-                    this.addMessage('assistant', responseText);
+                    this.showToast('Rutina creada exitosamente', 'success');
+                    this.routineForm.reset();
+                    this.frecuencia = 3;
+                    this.frecuenciaValue.textContent = '3';
+                    this.frecuenciaDown.disabled = false;
+                    this.frecuenciaUp.disabled = false;
 
                 } catch (error) {
                     console.error('Error:', error);
-                    this.showToast(`Error: ${error.message}`);
+                    this.showToast(`Error al crear la rutina: ${error.message}`, 'error');
                 } finally {
-                    this.setLoading(false);
+                    this.setRoutineLoading(false);
                 }
             }
 
-            addMessage(type, content) {
-                const message = {
-                    type,
-                    content,
-                    timestamp: new Date()
-                };
-
-                this.messages.push(message);
-                this.hideWelcomeScreen();
-                this.renderMessage(message);
-                this.scrollToBottom();
+            setRoutineLoading(loading) {
+                const submitBtn = this.routineSubmit;
+                if (loading) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = `
+                        <div style="width:1rem;height:1rem;border:2px solid #fff;border-top:2px solid transparent;border-radius:50%;animation:spin 1s linear infinite;"></div>
+                        Creando rutina...
+                    `;
+                } else {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m22 2-7 20-4-9-9-4Z"/>
+                            <path d="M22 2 11 13"/>
+                        </svg>
+                        Crear Rutina Personalizada
+                    `;
+                }
             }
 
-            renderMessage(message) {
+            showRoutineDisplay(routine) {
+                this.routineContent.innerHTML = this.parseMarkdown(routine);
+                this.routineDisplay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+
+            hideRoutineDisplay() {
+                this.routineDisplay.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+
+            downloadRoutineFile() {
+                const element = document.createElement("a");
+                const file = new Blob([this.parseMarkdown(this.currentRoutine)], { type: 'text/html' });
+                element.href = URL.createObjectURL(file);
+                element.download = "rutina-personalizada.html";
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+                this.showToast('Rutina descargada exitosamente', 'success');
+            }
+
+            async shareRoutineContent() {
+                if (navigator.share) {
+                    try {
+                        await navigator.share({ title: 'Mi Rutina Personalizada', text: this.currentRoutine });
+                    } catch (error) { console.error('Error sharing:', error); }
+                } else {
+                    try {
+                        await navigator.clipboard.writeText(this.currentRoutine);
+                        this.showToast('Rutina copiada al portapapeles', 'success');
+                    } catch (error) {
+                        console.error('Error copying to clipboard:', error);
+                        this.showToast('Error al copiar la rutina', 'error');
+                    }
+                }
+            }
+
+            toggleFullscreen() {
+                this.isFullscreen = !this.isFullscreen;
+                if (this.isFullscreen) {
+                    this.chatWrapper.classList.add('chat-fullscreen');
+                    this.fullscreenToggle.innerHTML = `
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 3v3a2 2 0 0 1-2 2H3"/>
+                            <path d="M21 8h-3a2 2 0 0 1-2-2V3"/>
+                            <path d="M3 16h3a2 2 0 0 1 2 2v3"/>
+                            <path d="M16 21v-3a2 2 0 0 1 2-2h3"/>
+                        </svg>
+                    `;
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    this.chatWrapper.classList.remove('chat-fullscreen');
+                    this.fullscreenToggle.innerHTML = `
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
+                            <path d="M21 8V5a2 2 0 0 0-2-2h-3"/>
+                            <path d="M3 16v3a2 2 0 0 0 2 2h3"/>
+                            <path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+                        </svg>
+                    `;
+                    document.body.style.overflow = 'auto';
+                }
+            }
+
+            async sendChatMessage() {
+                const message = this.chatInput.value.trim();
+                if (!message || this.isLoading) return;
+
+                this.addChatMessage('user', message);
+                this.chatInput.value = '';
+                this.setChatLoading(true);
+
+                try {
+                    const response = await fetch('http://127.0.0.1:5000/entrenamientos', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ pregunta: message }),
+                    });
+
+                    if (!response.ok) throw new Error(`Error del servidor: ${response.status}`);
+                    const data = await response.json();
+                    if (data.error) throw new Error(data.error);
+
+                    this.addChatMessage('assistant', data.respuesta || "No se recibió respuesta");
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    this.showToast(`Error al enviar consulta: ${error.message}`, 'error');
+                } finally {
+                    this.setChatLoading(false);
+                }
+            }
+
+            addChatMessage(type, content) {
+                const message = { type, content, timestamp: new Date() };
+                this.chatMessages.push(message);
+                this.hideEmptyChat();
+                this.renderChatMessage(message);
+                this.scrollChatToBottom();
+            }
+
+            renderChatMessage(message) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${message.type}`;
-                
                 const time = message.timestamp.toLocaleTimeString();
-                const processedContent = message.type === 'assistant' ? 
-                    this.parseMarkdown(message.content) : 
-                    this.escapeHtml(message.content);
-                
+
+                const processedContent = message.type === 'assistant'
+                    ? this.parseMarkdown(message.content)
+                    : this.escapeHtml(message.content);
+
                 if (message.type === 'assistant') {
                     messageDiv.innerHTML = `
                         <div class="message-avatar bot">
@@ -616,15 +744,15 @@
                             </svg>
                         </div>
                         <div class="message-card bot">
-                            <div class="message-content">${processedContent}</div>
-                            <span class="message-time">${time}</span>
+                            <div class="message-content markdown-content">${processedContent}</div>
+                            <div class="message-time">${time}</div>
                         </div>
                     `;
                 } else {
                     messageDiv.innerHTML = `
                         <div class="message-card user">
                             <div class="message-content">${processedContent}</div>
-                            <span class="message-time">${time}</span>
+                            <div class="message-time">${time}</div>
                         </div>
                         <div class="message-avatar user">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -635,55 +763,152 @@
                     `;
                 }
 
-                this.messagesContainer.appendChild(messageDiv);
+                this.chatContainer.appendChild(messageDiv);
             }
 
-            parseMarkdown(text) {
-                let html = this.escapeHtml(text);
-                
-                // Convert tables
-                html = html.replace(/\n(\|[^\n]+\|)\n(\|[-\s:|]+\|)\n((?:\|[^\n]+\|\n?)*)/g, (match, header, separator, rows) => {
-                    const headerCells = header.split('|').slice(1, -1).map(cell => cell.trim());
-                    const rowData = rows.trim().split('\n').map(row => 
-                        row.split('|').slice(1, -1).map(cell => cell.trim())
-                    );
-                    
-                    let tableHtml = '<table><thead><tr>';
-                    headerCells.forEach(cell => {
-                        tableHtml += `<th>${cell}</th>`;
-                    });
-                    tableHtml += '</tr></thead><tbody>';
-                    
-                    rowData.forEach(row => {
-                        tableHtml += '<tr>';
-                        row.forEach(cell => {
-                            tableHtml += `<td>${cell}</td>`;
-                        });
-                        tableHtml += '</tr>';
-                    });
-                    
-                    tableHtml += '</tbody></table>';
-                    return '\n' + tableHtml + '\n';
+            /* -------------------------- MARKDOWN PARSER -------------------------- */
+            parseMarkdown(mdText) {
+                if (!mdText) return '';
+
+                // 1) Escape HTML to avoid XSS
+                let text = this.escapeHtml(mdText);
+
+                // 2) Extract fenced code blocks ```...``` and inline `...` as placeholders
+                const placeholders = [];
+                // Fenced code blocks (```lang?\ncode\n```)
+                text = text.replace(/```([\s\S]*?)```/g, (_, code) => {
+                    const idx = placeholders.push(
+                        `<pre><code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;').trim()}</code></pre>`
+                    ) - 1;
+                    return `@@CODEBLOCK${idx}@@`;
                 });
-                
-                // Convert headers
-                html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-                html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-                html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-                
-                // Convert bold text
-                html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                
-                // Convert line breaks to paragraphs
-                html = html.replace(/\n\n/g, '</p><p>');
-                html = '<p>' + html + '</p>';
-                
-                // Clean up empty paragraphs and fix table placement
-                html = html.replace(/<p><\/p>/g, '');
-                html = html.replace(/<p>(<table.*?<\/table>)<\/p>/g, '$1');
-                html = html.replace(/<p>(<h[1-6]>.*?<\/h[1-6]>)<\/p>/g, '$1');
-                
-                return html;
+                // Inline code `
+                text = text.replace(/`([^`]+?)`/g, (_, code) => {
+                    const idx = placeholders.push(
+                        `<code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code>`
+                    ) - 1;
+                    return `@@CODEBLOCK${idx}@@`;
+                });
+
+                // 3) Headings with # (support up to h6, allow up to 3 leading spaces)
+                text = text.replace(/^\s{0,3}(#{1,6})\s+(.+)$/gm, (m, hashes, content) => {
+                    const level = Math.min(6, hashes.length);
+                    return `<h${level}>${content.trim()}</h${level}>`;
+                });
+
+                // 4) Lines that are ONLY bold => treat as h3 headings (fix "**Encabezado**" mostrando asteriscos)
+                text = text.replace(/^\s*\*\*(.+?)\*\*\s*$/gm, '<h3>$1</h3>');
+
+                // 5) Bold and italics (order matters)
+                text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');     // **bold**
+                // _italic_ or *italic* (avoid touching already strong)
+                text = text.replace(/(^|[^\w*])\*(?!\*)([^*\n]+)\*(?!\*)(?!\w)/g, '$1<em>$2</em>');
+                text = text.replace(/(^|[^\w_])_([^_\n]+)_(?!\w)/g, '$1<em>$2</em>');
+
+                // 6) Links [text](https://...)
+                text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+                    '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+                // 7) Horizontal rules
+                text = text.replace(/^\s*(?:-{3,}|\*{3,}|_{3,})\s*$/gm, '<hr/>');
+
+                // 8) Blockquotes
+                text = text.replace(/^\s*>\s?(.*)$/gm, '<blockquote>$1</blockquote>');
+
+                // 9) Tables (simple Markdown tables)
+                text = this.parseTable(text);
+
+                // 10) Lists (bulleted and ordered)
+                text = this.parseList(text);
+
+                // 11) Wrap remaining lines into paragraphs and keep single line breaks
+                const blocks = text.split(/\n{2,}/).map(block => block.trim()).filter(Boolean);
+                const html = blocks.map(b => {
+                    if (/^<(h[1-6]|ul|ol|pre|table|blockquote|hr)/.test(b)) return b;
+                    // Keep line breaks within paragraph
+                    return `<p>${b.replace(/\n/g, '<br/>')}</p>`;
+                }).join('');
+
+                // 12) Reinsert code placeholders
+                return html.replace(/@@CODEBLOCK(\d+)@@/g, (_, i) => placeholders[Number(i)]);
+            }
+
+            parseTable(input) {
+                // Detect consecutive lines with pipes where the second line is a separator like ---|:---:
+                const lines = input.split('\n');
+                const out = [];
+                let i = 0;
+
+                const isSeparator = (line) => /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(line);
+
+                while (i < lines.length) {
+                    if (/\|/.test(lines[i])) {
+                        const start = i;
+                        const temp = [];
+                        while (i < lines.length && /\|/.test(lines[i]) && lines[i].trim() !== '') {
+                            temp.push(lines[i]);
+                            i++;
+                        }
+                        if (temp.length >= 2 && isSeparator(temp[1])) {
+                            // Build table
+                            const headerCells = temp[0].split('|').map(c => c.trim()).filter(c => c !== '');
+                            const bodyRows = temp.slice(2).map(r => r.split('|').map(c => c.trim()).filter(c => c !== ''));
+
+                            let table = '<table><thead><tr>';
+                            headerCells.forEach(h => table += `<th>${h}</th>`);
+                            table += '</tr></thead><tbody>';
+
+                            bodyRows.forEach(row => {
+                                if (row.length === 0) return;
+                                table += '<tr>';
+                                row.forEach(td => table += `<td>${td}</td>`);
+                                table += '</tr>';
+                            });
+
+                            table += '</tbody></table>';
+                            out.push(table);
+                        } else {
+                            // Not a valid table, push back original chunk
+                            out.push(...temp);
+                        }
+                    } else {
+                        out.push(lines[i]);
+                        i++;
+                    }
+                }
+                return out.join('\n');
+            }
+
+            parseList(input) {
+                const lines = input.split('\n');
+                const out = [];
+                let inList = false;
+                let listType = null;
+
+                const openList = (type) => { out.push(type === 'ol' ? '<ol>' : '<ul>'); inList = true; listType = type; };
+                const closeList = () => { if (inList) { out.push(listType === 'ol' ? '</ol>' : '</ul>'); } inList = false; listType = null; };
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+
+                    // Bullet: -, *, +
+                    const bullet = line.match(/^\s*[-*+]\s+(.+)$/);
+                    // Numbered: 1. / 1)
+                    const numbered = line.match(/^\s*\d+[.)]\s+(.+)$/);
+
+                    if (bullet) {
+                        if (!inList || listType !== 'ul') { closeList(); openList('ul'); }
+                        out.push(`<li>${bullet[1]}</li>`);
+                    } else if (numbered) {
+                        if (!inList || listType !== 'ol') { closeList(); openList('ol'); }
+                        out.push(`<li>${numbered[1]}</li>`);
+                    } else {
+                        closeList();
+                        out.push(line);
+                    }
+                }
+                closeList();
+                return out.join('\n');
             }
 
             escapeHtml(text) {
@@ -691,39 +916,17 @@
                 div.textContent = text;
                 return div.innerHTML;
             }
+            /* ------------------------ END MARKDOWN PARSER ------------------------ */
 
-            setLoading(loading) {
+            setChatLoading(loading) {
                 this.isLoading = loading;
-                this.questionInput.disabled = loading;
-                this.sendButton.disabled = loading;
-
-                if (loading) {
-                    this.hideWelcomeScreen();
-                    this.showLoadingMessage();
-                    this.sendButton.innerHTML = `
-                        <svg class="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2v4"/>
-                            <path d="m16.2 7.8 2.9-2.9"/>
-                            <path d="M18 12h4"/>
-                            <path d="m16.2 16.2 2.9 2.9"/>
-                            <path d="M12 18v4"/>
-                            <path d="m4.9 19.1 2.9-2.9"/>
-                            <path d="M2 12h4"/>
-                            <path d="m4.9 4.9 2.9 2.9"/>
-                        </svg>
-                    `;
-                } else {
-                    this.hideLoadingMessage();
-                    this.sendButton.innerHTML = `
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="m22 2-7 20-4-9-9-4Z"/>
-                            <path d="M22 2 11 13"/>
-                        </svg>
-                    `;
-                }
+                this.chatInput.disabled = loading;
+                this.chatSend.disabled = loading;
+                if (loading) { this.hideEmptyChat(); this.showChatLoading(); }
+                else { this.hideChatLoading(); }
             }
 
-            showLoadingMessage() {
+            showChatLoading() {
                 const loadingDiv = document.createElement('div');
                 loadingDiv.className = 'message';
                 loadingDiv.id = 'loadingMessage';
@@ -740,61 +943,35 @@
                     </div>
                     <div class="message-card bot">
                         <div class="loading-message">
-                            <svg class="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 2v4"/>
-                                <path d="m16.2 7.8 2.9-2.9"/>
-                                <path d="M18 12h4"/>
-                                <path d="m16.2 16.2 2.9 2.9"/>
-                                <path d="M12 18v4"/>
-                                <path d="m4.9 19.1 2.9-2.9"/>
-                                <path d="M2 12h4"/>
-                                <path d="m4.9 4.9 2.9 2.9"/>
-                            </svg>
-                            <span class="loading-text">Pensando...</span>
+                            <div style="width:1rem;height:1rem;border:2px solid hsl(var(--ai-primary));border-top:2px solid transparent;border-radius:50%;animation:spin 1s linear infinite;"></div>
+                            <span style="color:hsl(var(--muted-foreground));">Pensando...</span>
                         </div>
                     </div>
                 `;
-                this.messagesContainer.appendChild(loadingDiv);
-                this.scrollToBottom();
+                this.chatContainer.appendChild(loadingDiv);
+                this.scrollChatToBottom();
             }
 
-            hideLoadingMessage() {
+            hideChatLoading() {
                 const loadingMessage = document.getElementById('loadingMessage');
-                if (loadingMessage) {
-                    loadingMessage.remove();
-                }
+                if (loadingMessage) loadingMessage.remove();
             }
 
-            hideWelcomeScreen() {
-                if (this.welcomeScreen) {
-                    this.welcomeScreen.style.display = 'none';
-                }
-            }
+            hideEmptyChat() { if (this.chatEmpty) this.chatEmpty.style.display = 'none'; }
+            scrollChatToBottom() { setTimeout(() => { this.chatContainer.scrollTop = this.chatContainer.scrollHeight; }, 100); }
 
-            scrollToBottom() {
-                setTimeout(() => {
-                    this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
-                }, 100);
-            }
-
-            showToast(message) {
+            showToast(message, type = 'error') {
                 const toast = document.createElement('div');
-                toast.className = 'toast';
+                toast.className = `toast ${type}`;
                 toast.textContent = message;
                 toast.addEventListener('click', () => toast.remove());
                 document.body.appendChild(toast);
-
-                setTimeout(() => {
-                    if (toast.parentNode) {
-                        toast.remove();
-                    }
-                }, 5000);
+                setTimeout(() => { if (toast.parentNode) toast.remove(); }, 5000);
             }
         }
 
-        // Initialize chat when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            new LLMChat();
+            new AIAssistant();
         });
     </script>
 </body>
