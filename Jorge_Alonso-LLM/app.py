@@ -11,7 +11,7 @@ app.config["DEBUG"] = True
 
 
 #SE DEBERÍA HACER CON LAS VARIABES EN INGLES HTML?
-#const response = await fetch('http://localhost:5000/entrenamientos', {
+#const response = await fetch('http://localhost:5000/entrenamientos', 
 
 
 #inicio de la API

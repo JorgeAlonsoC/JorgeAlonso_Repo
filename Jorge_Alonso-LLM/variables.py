@@ -1,12 +1,15 @@
+import os
+from dotenv import load_dotenv
 
+load_dotenv("variables.env")
 config = {
-    "host":"database-1.cr4emq2gye48.eu-west-3.rds.amazonaws.com",
-    "user":"postgres",
-    "password": "Hola1234",
-    "port": 5432,
-    "dbname":"postgres"
+    "host": os.getenv("DB_HOST"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "port": os.getenv("DB_PORT"),
+    "dbname":os.getenv("DB_NAME")
     }
 
 
 import os
-os.environ["GROQ_API_KEY"] = "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"
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")

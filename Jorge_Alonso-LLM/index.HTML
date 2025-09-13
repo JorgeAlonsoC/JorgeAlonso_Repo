@@ -319,6 +319,92 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Markdown styling */
+        .message-content h1, .message-content h2, .message-content h3, 
+        .message-content h4, .message-content h5, .message-content h6 {
+            font-weight: bold;
+            margin: 1rem 0 0.5rem 0;
+            line-height: 1.25;
+        }
+
+        .message-content h1 { font-size: 1.5rem; }
+        .message-content h2 { font-size: 1.25rem; }
+        .message-content h3 { font-size: 1.125rem; }
+
+        .message-content strong {
+            font-weight: 600;
+            color: hsl(var(--ai-primary));
+        }
+
+        .message-content p {
+            margin: 0.5rem 0;
+        }
+
+        .message-content ul, .message-content ol {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .message-content li {
+            margin: 0.25rem 0;
+        }
+
+        /* Table styling */
+        .message-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: hsl(var(--card));
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 2px 4px hsl(var(--border) / 0.3);
+        }
+
+        .message-content th {
+            background: linear-gradient(135deg, hsl(var(--ai-primary)), hsl(var(--ai-secondary)));
+            color: hsl(var(--primary-foreground));
+            font-weight: 600;
+            padding: 0.75rem;
+            text-align: left;
+            border: none;
+        }
+
+        .message-content td {
+            padding: 0.75rem;
+            border-bottom: 1px solid hsl(var(--border));
+            background: hsl(var(--card));
+        }
+
+        .message-content tr:last-child td {
+            border-bottom: none;
+        }
+
+        .message-content tr:hover td {
+            background: hsl(var(--muted) / 0.5);
+        }
+
+        /* Code blocks */
+        .message-content code {
+            background: hsl(var(--muted));
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+
+        .message-content pre {
+            background: hsl(var(--muted));
+            padding: 1rem;
+            border-radius: var(--radius);
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .message-content pre code {
+            background: none;
+            padding: 0;
+        }
+
         /* Toast notification */
         .toast {
             position: fixed;
@@ -393,8 +479,8 @@
                             <path d="M9 13v2"/>
                         </svg>
                     </div>
-                    <h2 class="welcome-title">Bienvenido al Asistente de IA</h2>
-                    <p class="welcome-text">Comienza una conversación escribiendo tu pregunta abajo</p>
+                    <h2 class="welcome-title">Bienvenido al Asistente de IA para entrenamientos personalizados!</h2>
+                    <p class="welcome-text">Te ayudamos a planificar tus entrenamientos.</p>
                 </div>
             </div>
         </div>
@@ -513,6 +599,9 @@
                 messageDiv.className = `message ${message.type}`;
                 
                 const time = message.timestamp.toLocaleTimeString();
+                const processedContent = message.type === 'assistant' ? 
+                    this.parseMarkdown(message.content) : 
+                    this.escapeHtml(message.content);
                 
                 if (message.type === 'assistant') {
                     messageDiv.innerHTML = `
@@ -527,14 +616,14 @@
                             </svg>
                         </div>
                         <div class="message-card bot">
-                            <div class="message-content">${this.escapeHtml(message.content)}</div>
+                            <div class="message-content">${processedContent}</div>
                             <span class="message-time">${time}</span>
                         </div>
                     `;
                 } else {
                     messageDiv.innerHTML = `
                         <div class="message-card user">
-                            <div class="message-content">${this.escapeHtml(message.content)}</div>
+                            <div class="message-content">${processedContent}</div>
                             <span class="message-time">${time}</span>
                         </div>
                         <div class="message-avatar user">
@@ -547,6 +636,54 @@
                 }
 
                 this.messagesContainer.appendChild(messageDiv);
+            }
+
+            parseMarkdown(text) {
+                let html = this.escapeHtml(text);
+                
+                // Convert tables
+                html = html.replace(/\n(\|[^\n]+\|)\n(\|[-\s:|]+\|)\n((?:\|[^\n]+\|\n?)*)/g, (match, header, separator, rows) => {
+                    const headerCells = header.split('|').slice(1, -1).map(cell => cell.trim());
+                    const rowData = rows.trim().split('\n').map(row => 
+                        row.split('|').slice(1, -1).map(cell => cell.trim())
+                    );
+                    
+                    let tableHtml = '<table><thead><tr>';
+                    headerCells.forEach(cell => {
+                        tableHtml += `<th>${cell}</th>`;
+                    });
+                    tableHtml += '</tr></thead><tbody>';
+                    
+                    rowData.forEach(row => {
+                        tableHtml += '<tr>';
+                        row.forEach(cell => {
+                            tableHtml += `<td>${cell}</td>`;
+                        });
+                        tableHtml += '</tr>';
+                    });
+                    
+                    tableHtml += '</tbody></table>';
+                    return '\n' + tableHtml + '\n';
+                });
+                
+                // Convert headers
+                html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+                html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+                html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+                
+                // Convert bold text
+                html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                
+                // Convert line breaks to paragraphs
+                html = html.replace(/\n\n/g, '</p><p>');
+                html = '<p>' + html + '</p>';
+                
+                // Clean up empty paragraphs and fix table placement
+                html = html.replace(/<p><\/p>/g, '');
+                html = html.replace(/<p>(<table.*?<\/table>)<\/p>/g, '$1');
+                html = html.replace(/<p>(<h[1-6]>.*?<\/h[1-6]>)<\/p>/g, '$1');
+                
+                return html;
             }
 
             escapeHtml(text) {

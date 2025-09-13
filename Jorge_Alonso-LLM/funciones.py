@@ -3,6 +3,7 @@ from groq import Groq
 import os
 import psycopg2
 from variables import config
+from dotenv import load_dotenv
 
 def bbdd (pregunta, respuesta):
     conn = psycopg2.connect(**config)
@@ -23,7 +24,7 @@ def bbdd (pregunta, respuesta):
 
 def llm(pregunta):
   client = Groq(
-      api_key=os.environ.get("GROQ_API_KEY"),
+      api_key=os.getenv("GROQ_API_KEY"),
   )
 
   chat_completion = client.chat.completions.create(
