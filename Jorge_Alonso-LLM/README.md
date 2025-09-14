@@ -63,7 +63,7 @@ El flujo completo conecta **frontend (HTML)** → **API (Flask)** → **LLM (GRO
   **Memoria de desarrollo** donde se prototipó la conexión a la API LLM y se validó el flujo previo al despliegue en `app.py`.
 
 - **index.html**  *(Generado con lovable.dev).*
-  **Frontend** para interactuar con la IA personalizada:  
+  - **Frontend** para interactuar con la IA personalizada:  
   - Formulario de **rutinas completas**.  
   - Apartado de **preguntas rápidas**.  
 
