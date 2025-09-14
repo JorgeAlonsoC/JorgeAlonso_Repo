@@ -9,7 +9,7 @@ Este proyecto desarrolla una **página de IA** basada en **LLM** especializada e
 
 El flujo completo conecta **frontend (HTML)** → **API (Flask)** → **LLM (GROQ)** → **BBDD (PostgreSQL en AWS)**, registrando cada interacción (pregunta, respuesta y hora) y devolviendo la respuesta lista para el usuario.
 
-![Flujo completo](Docs/Flujo%20Completo.png)
+![Flujo completo](Docs/Flujo_Completo.png)
 
 ---
 
