@@ -1,4 +1,8 @@
 # ♠️ Machine Learning aplicado al Blackjack
+<p align="center">
+  <img src="Docs/models/Recursos_modelo/portada.png" alt="ML - Black JAck. Jorge Alonso Conde" width="600">
+</p>
+
 
 ## 🎲 Proyecto ML Blackjack
 
