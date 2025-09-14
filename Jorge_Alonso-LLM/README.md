@@ -1,4 +1,5 @@
 # 🏋️‍♂️ IA de Entrenamientos Personales (LLM)
+![IA - Entrenamiento personales. Jorge Alonso Conde](Docs/IA_fitness.png)
 
 ## 📚 Introducción
 
