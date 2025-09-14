@@ -1,5 +1,8 @@
 # 🏋️‍♂️ IA de Entrenamientos Personales (LLM)
-![IA - Entrenamiento personales. Jorge Alonso Conde](Docs/IA_fitness.png)
+<p align="center">
+  <img src="Docs/IA_fitness.png" alt="IA - Entrenamientos personales. Jorge Alonso Conde" width="750">
+</p>
+
 
 ## 📚 Introducción
 
