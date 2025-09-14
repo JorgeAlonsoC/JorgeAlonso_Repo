@@ -64,6 +64,6 @@ Los requisitos necesarios para ejecutar el proyecto están detallados en el arch
 
 ## ✨ Autor
 
-Proyecto realizado por **Jorge Alonso** para fines de práctica en análisis de datos con Python y visualización.
+Proyecto realizado por **Jorge Alonso**.
 
 [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?logo=linkedin&logoColor=white&style=flat-square)](https://www.linkedin.com/in/jorge-alonso-conde) &nbsp; [**Jorge Alonso Conde**](https://www.linkedin.com/in/jorge-alonso-conde)
