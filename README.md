@@ -31,7 +31,12 @@ Me apasiona combinar el análisis técnico con la visión de negocio para genera
    - Modelos de regresión y clasificación  
    - Feature engineering y evaluación de modelos
    - Prueba del modelo y desarrollo en streamlit.
-   
+
+3. **IA de Entrenamientos Personales (LLM)**  
+   - API Flask con LLM (GROQ) y registro en PostgreSQL (AWS)  
+   - Generador de rutinas personalizadas y módulo de consultas rápidas  
+   - Frontend HTML (lovable.dev) y test del endpoint `/entrenamientos`
+
 ---
 
 ## 📬 Contacto  
