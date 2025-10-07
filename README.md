@@ -37,6 +37,12 @@ Me apasiona combinar el análisis técnico con la visión de negocio para genera
    - Generador de rutinas personalizadas y módulo de consultas rápidas  
    - Frontend HTML (lovable.dev) y test del endpoint `/entrenamientos`
 
+4. **Dashboard ventas de café (Power BI)**  
+   - KPIs de ventas y transacciones, variación vs. período anterior y ticket medio  
+   - Heatmap por día/hora, Top productos y mix de pago; tema visual personalizado  
+   - ETL con Power Query y medidas DAX (incluida tabla calendario)
+
+     
 ---
 
 ## 📬 Contacto  
