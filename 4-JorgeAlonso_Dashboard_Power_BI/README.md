@@ -7,7 +7,7 @@ El informe permite analizar volumen de transacciones, ventas, variaciones respec
 ---
 
 ## 🎯 Objetivo
-- Construir un dashboard para el **seguimiento de ventas de cafés** y **apoyo a la toma de decisiones** (tácticas y estratégicas).
+Construir un dashboard para el **seguimiento de ventas de cafés** y **apoyo a la toma de decisiones** (tácticas y estratégicas).
 
 ---
 
