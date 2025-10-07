@@ -1,0 +1,24 @@
+{
+  "name": "Sales Pro — Modern Light (Colorblind‑Safe)",
+  "dataColors": [
+    "#0072B2",
+    "#E69F00",
+    "#009E73",
+    "#CC79A7",
+    "#D55E00",
+    "#F0E442",
+    "#56B4E9",
+    "#000000",
+    "#999999",
+    "#44AA99",
+    "#332288",
+    "#88CCEE"
+  ],
+  "background": "#F7F9FC",
+  "foreground": "#212529",
+  "tableAccent": "#0072B2",
+  "accent": "#0072B2",
+  "good": "#2E7D32",
+  "neutral": "#B0BEC5",
+  "bad": "#E53935"
+}
