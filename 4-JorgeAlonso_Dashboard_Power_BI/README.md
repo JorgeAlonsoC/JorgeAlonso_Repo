@@ -1,5 +1,9 @@
 # ☕️ Dashboard de Ventas de Café (Power BI)
 
+<p align="center">
+  <img src="Assets/Dahboard_sales_coffe_main.png" alt="Dahboard - Coffee Sales. Jorge Alonso Conde" width="750">
+</p>
+
 ## 📚 Introducción
 Este proyecto reúne un **dashboard de ventas de cafés** orientado a **monitorizar el rendimiento** y **optimizar decisiones de negocio**.  
 El informe permite analizar volumen de transacciones, ventas, variaciones respecto al período anterior y desglose por productos, fechas y métodos de pago.
